@@ -10,7 +10,9 @@ import LoadCampaign from './LoadCampaign';
 export default function App() {
   const { character, loadCharacter } = useContext(CharacterContext);
   const [voiceClient, setVoiceClient] = useState(null); // State to store voiceClient
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState();
+  const [diceRolls, setDiceRolls] = useState([]); // State to store dice rolls
+  const [imageUrl, setImageUrl] = useState({});
 
   useEffect(() => {
     if (character && !voiceClient) {
@@ -23,8 +25,12 @@ export default function App() {
   Stats: ${JSON.stringify(character.stats, null, 2)}
   Equipment: ${character.equipment.join(', ')}
   Health: ${character.health}
+  Level: ${character.level}
+  Experience: ${character.experience}
+  Skills: ${character.skills.join(', ')}
 
-  Run the adventure "Descent into Avernus" with this character. Respond as an expert Dungeon Master, like Critical Role. Be concise and clear, but also creative. Be an engaging storyteller, using your voice to bring the adventure to life. Keep in mind that this will be a collaborative storytelling experience. The player will be able to interact with the story and make decisions. You will need to respond to the player's actions and choices. The text you produce will be read aloud, so do not write anything that could be mispronounced, such as symbols. This will be a theater of mind kind of experience, because we will not have a battle map presented. You must keep track of the players experience, and increment their level when it is the correct time to do it. Add experience to the player as they succeed on tasks, as a dungeon master would do. Begin by describing the scene. You do not need to describe the player's character, as they will do that themselves. You may roll on behalf of the character, using their stats and the Dungeon and Dragons ruleset to determine the outcome of the roll. Begin by looking at the characters class, and adding starter gear as well as starter skills (spells) if needed.`;
+  Run a novel d&d adventure with this character. Respond as an expert Dungeon Master, like Critical Role. Be concise and clear, but also creative. Be an engaging storyteller, but use short punchy sentences to keep the player in the driving seat. Do not complement the player as that is unneeded, keep the story moving. The player will be able to interact with the story and make decisions. You will need to respond to the player's actions and choices. The text you produce will be read aloud, so do not write anything that could be mispronounced, such as symbols. This will be a theater of mind kind of experience, because we will not have a battle map presented. You must keep track of the players experience, and increment their level when it is the correct time to do it. Add experience to the player as they succeed on tasks, as a dungeon master would do. Begin by describing the scene. You do not need to describe the player's character, as they will do that themselves. You may roll on behalf of the character, using their stats and the Dungeon and Dragons ruleset to determine the outcome of the roll. Be very brief when describing how the rolls are made. Do not describe long lists, or be overly wordy. Keep the story moving forward. If the player is in combat, keep the descriptions short. Use the generate image function to generate character portraits for NPCs or other pieces of the setting. Generate an image whenever the character meets someone new. Do not emote with *, but instead, just describe the sound or make the sound using onomatopoeia. Do not use modern terms or concepts, as this is a fantasy setting. Do not use modern slang or references. Do not use modern technology or concepts.`;
+
       const vc = new DailyVoiceClient({
         baseUrl: '/api',
         enableMic: true,
@@ -92,9 +98,45 @@ export default function App() {
                 name: 'tools',
                 value: [
                   {
+                    name: 'roll_dice',
+                    description:
+                      'As a dungeon master, you will sometimes need to roll dice to determine the outcome of an action. This function rolls a dice with the specified number of sides. You can use this function to determine the outcome of an action, such as an attack or a skill check. You would take the result of this function, and compare it to the difficulty of the action to determine if the action is successful. You will need to add the player characters stats to the result of this function to determine the final result. You may need to execute this function multiple times to get the total amount of rolls required. This will return an array of the results of the dice rolls.',
+                    input_schema: {
+                      type: 'object',
+                      properties: {
+                        dice_side_count: {
+                          type: 'number',
+                          description:
+                            "The number of sides on the dice to roll. For example, if you're rolling a 20-sided dice, this value would be 20.",
+                        },
+                        roll_count: {
+                          type: 'number',
+                          description:
+                            'The number of times to roll the dice. For example, if you want to roll the dice twice, this value would be 2.',
+                        },
+                      },
+                      required: ['dice_side_count', 'roll_count'],
+                    },
+                  },
+                  {
+                    name: 'get_character_state',
+                    description:
+                      'As a dungeon master, you will sometimes need to get the current state of the character. This function returns the current state of the character. You can use this to see the players current skills, items, level, health, or any other character information.',
+                    input_schema: {
+                      type: 'object',
+                      properties: {
+                        character_name: {
+                          type: 'string',
+                          description: "The character's name.",
+                        },
+                      },
+                      required: ['character_name'],
+                    },
+                  },
+                  {
                     name: 'change_health',
                     description:
-                      'As a dungeon master, you will sometimes need to remove or add health to the character. This function changes the characters health to this number.',
+                      'As a dungeon master, you will sometimes need to remove or add health to the character. This function changes the characters health to this number. You should use this function when the character takes damage or heals.',
                     input_schema: {
                       type: 'object',
                       properties: {
@@ -128,7 +170,7 @@ export default function App() {
                   {
                     name: 'change_level',
                     description:
-                      'As a dungeon master, you will sometimes need to remove or add level to the character. This function changes the characters level to this number.',
+                      'As a dungeon master, you will sometimes need to remove or add level to the character. This function changes the characters level to this number. When a character gains enough experience, you should increment the level. You should reset the experience to 0 when the player levels up.',
                     input_schema: {
                       type: 'object',
                       properties: {
@@ -143,7 +185,7 @@ export default function App() {
                   {
                     name: 'change_experience',
                     description:
-                      'As a dungeon master, you will sometimes need to remove or add experience to the character. This function changes the characters experience to this number.',
+                      'As a dungeon master, you will sometimes need to remove or add experience to the character. This function changes the characters experience to this number. You should increment the experience as the player succeeds on tasks. You should reset the experience to 0 when the player levels up.',
                     input_schema: {
                       type: 'object',
                       properties: {
@@ -158,7 +200,7 @@ export default function App() {
                   {
                     name: 'add_equipment',
                     description:
-                      'As a dungeon master, you will sometimes need to add equipment to the character. This function adds the equipment to the character.',
+                      'As a dungeon master, you will sometimes need to add equipment to the character. This function adds the equipment to the character. If a character finds an item, you should use this function to add the item to the character. If a character buys an item, you should use this function to add the item to the character.',
                     input_schema: {
                       type: 'object',
                       properties: {
@@ -175,9 +217,30 @@ export default function App() {
                     },
                   },
                   {
+                    name: 'generate_image',
+                    description:
+                      'As a dungeon master, you will sometimes need to generate an image to show the player, an npc, or an item. This function generates an image based on the input parameters. You can use this function to show the player a map, a character portrait, or any other image you need to show the player. Use this as needed to add flair to a scene. The prompt must include text that will generate an image in the fantasy style, so avoid using modern terms or concepts. The image should be fantasy inspired in style.',
+                    input_schema: {
+                      type: 'object',
+                      properties: {
+                        image_prompt: {
+                          type: 'string',
+                          description:
+                            'A description of the image to generate. This can be a description of a character, a map, or any other image you need to show the player. It should be a short description of the image, and always try to generate images that are fantasy inspired in style.',
+                        },
+                        title: {
+                          type: 'string',
+                          description:
+                            'A title for the image. This will be displayed above the image. It could be a name of the character, or the name of the place. This should often be a noun or pronoun.',
+                        },
+                      },
+                      required: ['image_prompt', 'title'],
+                    },
+                  },
+                  {
                     name: 'remove_equipment',
                     description:
-                      'As a dungeon master, you will sometimes need to remove equipment from the character. This function removes the equipment from the character.',
+                      'As a dungeon master, you will sometimes need to remove equipment from the character. This function removes the equipment from the character. You should use this if an item is used during the game, or if the character sells an item.',
                     input_schema: {
                       type: 'object',
                       properties: {
@@ -211,7 +274,6 @@ export default function App() {
         callbacks: {
           onBotReady: () => {
             console.log('Bot is ready!');
-            setBotState('ready');
           },
         },
       });
@@ -236,10 +298,14 @@ export default function App() {
           }));
         }
         if (fn.functionName === 'remove_equipment' && args.item) {
-          prev.equipment = prev.equipment.filter((item) => item !== args.item);
-          loadCharacter((prev) => ({
-            ...prev,
-          }));
+          loadCharacter((prev) => {
+            prev.equipment = prev.equipment.filter(
+              (item) => item !== args.item,
+            );
+            return {
+              ...prev,
+            };
+          });
         }
         if (fn.functionName === 'change_level' && args.new_level) {
           loadCharacter((prev) => ({ ...prev, level: args.new_level }));
@@ -256,6 +322,48 @@ export default function App() {
             skills: [...prev.skills, ...args.skills],
           }));
         }
+        if (fn.functionName === 'get_character_state') {
+          return {
+            status: 'success',
+            character,
+          };
+        }
+        if (
+          fn.functionName === 'roll_dice' &&
+          args.dice_side_count &&
+          args.roll_count
+        ) {
+          const rolls = [];
+          for (let i = 0; i < args.roll_count; i++) {
+            rolls.push(Math.floor(Math.random() * args.dice_side_count) + 1);
+          }
+          // rolls should be the type, value
+          const diceType = `d${args.dice_side_count}`;
+          setDiceRolls((prev) => [...rolls.map((r) => [diceType, r])]);
+          return {
+            status: 'success',
+            rolls,
+          };
+        }
+        if (fn.functionName === 'generate_image' && args.image_prompt) {
+          console.log('Generating image', args.image_prompt);
+          const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: args.image_prompt }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            const image = { imageUrl: data.imageUrl, title: args.title };
+            setImageUrl(image);
+          } else {
+            console.error(data);
+          }
+        }
         return {
           status: 'success',
         };
@@ -267,12 +375,15 @@ export default function App() {
   }, [character, voiceClient]); // Only run this when the character changes
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex-col items-center justify-center">
       {!character ? (
-        // Render character creation if no character is set
         <div>
           <CharacterCreation onComplete={loadCharacter} />
-          <LoadCampaign loadCharacter={loadCharacter} setPrompt={setPrompt} />
+          <LoadCampaign
+            loadCharacter={loadCharacter}
+            setPrompt={setPrompt}
+            setImageUrl={setImageUrl}
+          />
         </div>
       ) : (
         // Render game mode if the character is created
@@ -281,10 +392,27 @@ export default function App() {
             character={character}
             loadCharacter={loadCharacter}
             prompt={prompt}
+            diceRolls={diceRolls}
+            setDiceRolls={setDiceRolls}
+            imageUrl={imageUrl}
           />
           <VoiceClientAudio />
         </VoiceClientProvider>
       )}
+      <div className="bg-rsPanel border-rsGold border-4 p-4 rounded-rs shadow-md max-w-md mx-auto">
+        <h2 className="text-lg font-bold text-rsGold mb-2 font-rsFont">
+          Dungeon Music (https://sonatina.itch.io/)
+        </h2>
+        <audio
+          controls
+          autoPlay
+          loop
+          className="w-full rounded-rs bg-gray-800 p-2"
+        >
+          <source src="/output.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
     </div>
   );
 }

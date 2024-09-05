@@ -21,12 +21,12 @@ export default function Transcript({ transcript }) {
   };
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-      <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">
+    <div className="bg-rsPanel border-rsGold border-4 shadow-md rounded-rs mb-4">
+      <div className="px-4 py-5 border-b border-rsGold">
+        <h3 className="text-lg font-medium text-rsGold font-rsFont">
           Transcript
         </h3>
-        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+        <p className="mt-1 max-w-2xl text-sm text-rsText font-rsFont">
           A record of your adventure
         </p>
       </div>
@@ -35,15 +35,13 @@ export default function Transcript({ transcript }) {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="max-h-96 overflow-y-auto border-t border-gray-200"
+        className="max-h-96 overflow-y-auto p-4"
       >
         {transcript.map((text, i) => (
-          <dl key={i.toString()}>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">{text.type}</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">
-                {text.text}
-              </dd>
+          <dl key={i.toString()} className="bg-gray-800 p-3 rounded-md mb-2">
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-rsGold">{text.type}</dt>
+              <dd className="mt-1 text-sm text-rsText">{text.text}</dd>
             </div>
           </dl>
         ))}

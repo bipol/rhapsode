@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState } from 'react';
 
 interface Character {
   name: string;
@@ -14,6 +14,9 @@ interface Character {
   };
   skills: string[];
   equipment: string[];
+  health: number;
+  level: number;
+  experience: number;
 }
 
 // Character context
@@ -66,3 +69,75 @@ export const races = [
   { id: 'half-elf', name: 'Half-Elf' },
   { id: 'half-orc', name: 'Half-Orc' },
 ];
+
+export const startingEquipment = {
+  barbarian: ['Greataxe', 'Two Handaxes', "Explorer's Pack", 'Javelin (x4)'],
+  bard: ['Rapier', "Diplomat's Pack", 'Lute', 'Leather Armor', 'Dagger'],
+  cleric: ['Mace', 'Shield', 'Scale Mail', 'Holy Symbol', "Adventurer's Pack"],
+  druid: ['Quarterstaff', 'Leather Armor', "Explorer's Pack", 'Druidic Focus'],
+  fighter: [
+    'Chain Mail',
+    'Longsword',
+    'Shield',
+    'Light Crossbow',
+    '20 Crossbow Bolts',
+    "Dungeoneer's Pack",
+  ],
+  monk: ['Shortsword', "Dungeoneer's Pack", '10 Darts'],
+  paladin: [
+    'Longsword',
+    'Shield',
+    'Chain Mail',
+    'Holy Symbol',
+    "Explorer's Pack",
+  ],
+  ranger: [
+    'Longbow',
+    'Quiver of 20 Arrows',
+    'Leather Armor',
+    'Two Shortswords',
+    "Explorer's Pack",
+  ],
+  rogue: [
+    'Leather Armor',
+    'Two Daggers',
+    'Shortsword',
+    "Thieves' Tools",
+    "Burglar's Pack",
+  ],
+  sorcerer: [
+    'Quarterstaff',
+    'Component Pouch',
+    'Arcane Focus',
+    "Explorer's Pack",
+    'Dagger',
+  ],
+  warlock: [
+    'Light Crossbow',
+    'Arcane Focus',
+    'Leather Armor',
+    "Dungeoneer's Pack",
+    'Dagger',
+  ],
+  wizard: ['Spellbook', 'Quarterstaff', 'Component Pouch', "Scholar's Pack"],
+};
+
+export const startingSkillsAndSpells = {
+  barbarian: ['Rage', 'Unarmored Defense'],
+  bard: [
+    'Bardic Inspiration',
+    'Vicious Mockery',
+    'Cure Wounds',
+    'Charm Person',
+  ],
+  cleric: ['Cure Wounds', 'Guiding Bolt', 'Bless', 'Sacred Flame'],
+  druid: ['Druidcraft', 'Entangle', 'Cure Wounds', 'Thunderwave'],
+  fighter: ['Second Wind', 'Fighting Style (Choose One)'],
+  monk: ['Martial Arts', 'Unarmored Defense'],
+  paladin: ['Divine Sense', 'Lay on Hands'],
+  ranger: ['Favored Enemy', 'Natural Explorer'],
+  rogue: ['Sneak Attack', "Thieves' Cant"],
+  sorcerer: ['Fire Bolt', 'Mage Armor', 'Magic Missile', 'Shield'],
+  warlock: ['Eldritch Blast', 'Hex', 'Armor of Agathys'],
+  wizard: ['Mage Hand', 'Fire Bolt', 'Magic Missile', 'Shield'],
+};

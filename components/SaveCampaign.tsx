@@ -3,10 +3,11 @@ export default function SaveCampaign({
   character,
   transcript,
   prompt,
+  imageUrl,
   onComplete,
 }) {
   function handleSave() {
-    const data = JSON.stringify({ character, transcript, prompt });
+    const data = JSON.stringify({ character, transcript, prompt, imageUrl });
     const json = btoa(data);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -21,10 +22,10 @@ export default function SaveCampaign({
   }
 
   const buttonStyles =
-    'px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200';
+    'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
   return (
     <button className={buttonStyles} onClick={handleSave}>
-      Save
+      Save Campaign
     </button>
   );
 }

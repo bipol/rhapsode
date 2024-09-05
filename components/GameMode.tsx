@@ -10,16 +10,24 @@ import { VoiceEvent } from 'realtime-ai';
 import EquipmentList from './Equipment';
 import SaveCampaign from './SaveCampaign';
 import SpellList from './Spells';
+import DiceRoll from './DiceRoll';
 
 const status_text = {
-  idle: 'Initializing...',
+  idle: '',
   initializing: 'Initializing...',
   initialized: 'Start',
   authenticating: 'Requesting bot...',
   connecting: 'Connecting...',
 };
 
-export default function GameMode({ character, loadCharacter, prompt }) {
+export default function GameMode({
+  character,
+  loadCharacter,
+  prompt,
+  diceRolls,
+  setDiceRolls,
+  imageUrl,
+}) {
   const [transcript, setTranscript] = useState([]);
   const [appState, setAppState] = useState('idle'); // ['idle', 'listening', 'processing'
   const transportState = useVoiceClientTransportState();
@@ -38,7 +46,7 @@ export default function GameMode({ character, loadCharacter, prompt }) {
       if (data.final) {
         setTranscript((prev) => {
           // remove duplicates
-          prev.filter((t) => t.text !== data.text);
+          prev = prev.filter((t) => t.text !== data.text);
           return [...prev, { type: character.name, text: data.text }];
         });
       }
@@ -68,6 +76,9 @@ export default function GameMode({ character, loadCharacter, prompt }) {
 
   const isReady = appState === 'ready';
 
+  const buttonStyles =
+    'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
+
   async function handleStart() {
     await voiceClient.start();
   }
@@ -78,25 +89,38 @@ export default function GameMode({ character, loadCharacter, prompt }) {
         character={character}
         transcript={transcript}
         prompt=""
+        imageUrl={imageUrl}
         onComplete={() => {}}
       />
-      <div className="flex-1 overflow-y-auto mt-20">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="flex flex-row space-x-4">
+            <EquipmentList equipment={character.equipment} />
+            <SpellList spells={character.skills} />
+            <DiceRoll diceRolls={diceRolls} setDiceRolls={setDiceRolls} />
+            {imageUrl.imageUrl && (
+              <div className="bg-rsPanel border-rsGold border-4 p-4 shadow-md rounded-rs">
+                <div className="flex-col justify-center">
+                  <h1 className="text-2xl font-rsFont mb-6 text-center text-rsGold">
+                    {imageUrl.title}
+                  </h1>
+                  <img
+                    src={imageUrl.imageUrl}
+                    alt={imageUrl.title}
+                    className="mt-4 border-4 border-rsGold rounded-md w-full max-w-lg"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          {transcript.length > 0 && <Transcript transcript={transcript} />}
+        </div>
         {appState === 'idle' && (
-          <button
-            onClick={handleStart}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
+          <button onClick={handleStart} className={buttonStyles}>
             Start Game
           </button>
         )}
         {status_text[transportState as keyof typeof status_text]}
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex-row">
-            <EquipmentList equipment={character.equipment} />
-            <SpellList spells={character.skills} />
-          </div>
-          {transcript.length > 0 && <Transcript transcript={transcript} />}
-        </div>
       </div>
     </div>
   );

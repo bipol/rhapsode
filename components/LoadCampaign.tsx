@@ -3,7 +3,11 @@ import { useState } from 'react';
 // This should be a free text field and a button that can load a base64 encoded
 // json blob, that we can render to give us the prompt, character, and transcript
 // from a previous session
-export default function LoadCampaign({ loadCharacter, setPrompt }) {
+export default function LoadCampaign({
+  loadCharacter,
+  setPrompt,
+  setImageUrl,
+}) {
   const [file, setFile] = useState();
 
   function handleChange(event) {
@@ -17,8 +21,9 @@ export default function LoadCampaign({ loadCharacter, setPrompt }) {
     reader.onload = (e) => {
       const data = e.target.result;
       const json = atob(data);
-      const { transcript, character, prompt } = JSON.parse(json);
+      const { transcript, character, prompt, imageUrl } = JSON.parse(json);
       loadCharacter(character);
+      setImageUrl(imageUrl);
       const newPrompt = `
     You are the Dungeon Master. Here's the current game status:
 
@@ -33,7 +38,7 @@ export default function LoadCampaign({ loadCharacter, setPrompt }) {
     Here is the previous prompt:
     ${prompt}
 
-    Continue the adventure from here.
+    Continue the adventure from here. You do not need to preface your statements with "Dungeon Master" or "Player". Just type what you want to say.
     `;
       setPrompt(newPrompt);
       console.log('Loaded campaign');
@@ -42,13 +47,16 @@ export default function LoadCampaign({ loadCharacter, setPrompt }) {
   }
 
   const buttonStyles =
-    'px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200';
-  const inputStyles = 'w-full p-2 border border-gray-300 rounded mt-1 mb-4';
+    'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
+  const inputStyles =
+    'bg-gray-900 text-rsText border-4 border-rsGold rounded-rs p-2 text-center font-rsFont shadow-md focus:outline-none focus:ring-2 focus:ring-rsGold';
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+    <div className="max-w-lg mx-auto p-6 bg-rsBackground rounded-lg shadow-lg mt-10">
       <form onSubmit={handleSubmit}>
-        <h1 className="text-2xl font-bold mb-6 text-center">Load Campaign</h1>
+        <h1 className="text-2xl font-rsFont mb-6 text-center text-rsGold">
+          Load Campaign
+        </h1>
         <input type="file" className={inputStyles} onChange={handleChange} />
         <button type="submit" className={buttonStyles}>
           Load

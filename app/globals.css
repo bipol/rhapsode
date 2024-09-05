@@ -17,13 +17,10 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-dungeon-gradient min-h-screen bg-cover;
+  background-image: url('/cobblestones.jpeg');
+  background-size: cover;
+  background-blend-mode: multiply;
 }
 
 @layer utilities {

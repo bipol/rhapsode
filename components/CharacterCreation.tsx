@@ -1,25 +1,11 @@
 import { useState } from 'react';
-import { classes, races } from './context';
+import {
+  classes,
+  races,
+  startingEquipment,
+  startingSkillsAndSpells,
+} from './context';
 import { CubeIcon } from '@heroicons/react/20/solid';
-
-interface Character {
-  name: string;
-  race: string;
-  class: string;
-  stats: {
-    strength: number;
-    dexterity: number;
-    constitution: number;
-    intelligence: number;
-    wisdom: number;
-    charisma: number;
-  };
-  skills: string[];
-  equipment: string[];
-  health: number;
-  level: number;
-  experience: number;
-}
 
 export default function CharacterCreation({ onComplete }) {
   const [errors, setErrors] = useState({});
@@ -71,7 +57,19 @@ export default function CharacterCreation({ onComplete }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setCharacter({ ...character, [name]: value });
+    // when a class is selected, add starting equipment and skills
+    if (name === 'class') {
+      const startingEquipmentForClass = startingEquipment[value] || [];
+      const startingSkillsForClass = startingSkillsAndSpells[value] || [];
+      setCharacter((prev) => ({
+        ...prev,
+        class: value,
+        equipment: startingEquipmentForClass,
+        skills: startingSkillsForClass,
+      }));
+    } else {
+      setCharacter({ ...character, [name]: value });
+    }
   };
 
   const handleStatChange = (stat, value) => {
@@ -113,21 +111,24 @@ export default function CharacterCreation({ onComplete }) {
   };
 
   const buttonStyles =
-    'px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200';
-  const inputStyles = 'w-full p-2 border border-gray-300 rounded mt-1 mb-4';
+    'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Create Your Character
-      </h1>
+    <div className="max-w-lg mx-auto p-6 bg-rsBackground rounded-lg shadow-lg mt-10">
+      <div className="flex items-center justify-center">
+        <img src="/skull.gif" alt="Torch Animation" className="w-16 h-16" />
+        <h1 className="text-2xl font-rsFont mb-6 text-center text-rsGold">
+          Create Your Character
+        </h1>
+        <img src="/skull.gif" alt="Torch Animation" className="w-16 h-16" />
+      </div>
       {step === 1 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">
+          <h2 className="text-lg font-rsFont text-rsText mb-4">
             Step 1: Race, Class, Name
           </h2>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-rsFont text-rsText">
               Character Name
             </label>
             <input
@@ -145,7 +146,7 @@ export default function CharacterCreation({ onComplete }) {
             )}
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-rsFont text-rsText">
               Select Race
             </label>
             <select
@@ -169,7 +170,7 @@ export default function CharacterCreation({ onComplete }) {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-rsFont text-rsText">
               Select Class
             </label>
             <select
@@ -206,10 +207,12 @@ export default function CharacterCreation({ onComplete }) {
       )}
       {step === 2 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Step 2: Assign Stats</h2>
+          <h2 className="text-lg font-rsFont mb-4 text-rsText">
+            Step 2: Assign Stats
+          </h2>
           {Object.keys(character.stats).map((stat) => (
             <div key={stat} className="flex items-center mb-4">
-              <label className="w-32 text-sm font-medium text-gray-700">
+              <label className="w-32 text-sm font-rsFont text-rsText">
                 {stat.charAt(0).toUpperCase() + stat.slice(1)}
               </label>
               <input
@@ -239,8 +242,7 @@ export default function CharacterCreation({ onComplete }) {
       )}
       {step === 3 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Step 3: Select Skills</h2>
-          {/* Add skill selection here */}
+          <img src="/cool_door.gif" alt="Torch Animation" />
           <div className="flex justify-between">
             <button onClick={prevStep} className={buttonStyles}>
               Back
