@@ -47,7 +47,7 @@ export default function App() {
               {
                 name: 'params',
                 value: {
-                  stop_secs: 0.3,
+                  stop_secs: 0.5,
                 },
               },
             ],
