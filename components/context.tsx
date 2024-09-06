@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 
-interface Character {
+export interface Character {
   name: string;
   race: string;
   class: string;
@@ -21,18 +21,26 @@ interface Character {
 
 // Character context
 export const CharacterContext = createContext<{
-  character: Character | null;
-  loadCharacter: (character: Character) => void;
+  character: Character | undefined;
+  loadCharacter: (
+    character: Character | ((prev: Character) => Character),
+  ) => void;
 }>({
-  character: null,
+  character: undefined,
   loadCharacter: () => {},
 });
 
-export const CharacterProvider = ({ children }) => {
-  const [character, setCharacter] = useState(null);
+export const CharacterProvider = ({ children }: { children: any }) => {
+  const [character, setCharacter] = useState<Character | undefined>();
 
-  const loadCharacter = (newCharacter) => {
-    setCharacter(newCharacter);
+  const loadCharacter = (
+    character: Character | ((prev: Character) => Character),
+  ) => {
+    if (typeof character === 'function') {
+      setCharacter((prev) => character(prev as Character));
+    } else {
+      setCharacter(character);
+    }
   };
 
   return (

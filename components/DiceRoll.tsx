@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 
-export default function DiceRoll({ diceRolls, setDiceRolls }) {
+export default function DiceRoll({
+  diceRolls,
+  setDiceRolls,
+}: {
+  diceRolls: [string, number][];
+  setDiceRolls: React.Dispatch<React.SetStateAction<[string, number][]>>;
+}) {
   // if clicked, we remove the dice roll
-  const removeDiceRoll = (index) => {
+  const removeDiceRoll = (index: number) => {
     // remove this specific index from the array
     const newDiceRolls = diceRolls.filter((_, i) => i !== index);
     setDiceRolls(newDiceRolls);
@@ -28,7 +34,7 @@ export default function DiceRoll({ diceRolls, setDiceRolls }) {
 }
 
 // Helper component to render a styled dice face
-function DiceFace({ type, value }) {
+function DiceFace({ type, value }: { type: string; value: number }) {
   const diceStyles = {
     d6: 'bg-red-500 text-white',
     d20: 'bg-blue-500 text-white',
@@ -39,7 +45,8 @@ function DiceFace({ type, value }) {
   };
 
   // Set default dice color or style based on dice type
-  const diceStyle = diceStyles[type] || 'bg-gray-500 text-white';
+  const diceStyle =
+    diceStyles[type as keyof typeof diceStyles] || 'bg-gray-500 text-white';
 
   return (
     <div

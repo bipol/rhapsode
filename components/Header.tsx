@@ -1,6 +1,7 @@
 import React from 'react';
+import { Character } from './context';
 
-const Header = ({ character }) => {
+const Header = ({ character }: { character: Character }) => {
   return (
     <header className="bg-gray-800 text-rsText p-4 shadow-md">
       <div className="max-w-4xl mx-auto flex justify-between items-center">

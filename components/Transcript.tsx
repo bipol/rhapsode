@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function Transcript({ transcript }) {
+export default function Transcript({ transcript }: { transcript: any[] }) {
   const [isAtBottom, setIsAtBottom] = useState(true); // Tracks whether we're at the bottom
-  const scrollRef = useRef(null); // Reference to the scrollable div
+  const scrollRef = useRef<HTMLDivElement>(null); // Reference to the scrollable div
 
   // Scroll to the bottom whenever the transcript updates
   useEffect(() => {

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { ChangeEventHandler, useState } from 'react';
 import {
+  Character,
   classes,
   races,
   startingEquipment,
@@ -7,10 +8,18 @@ import {
 } from './context';
 import { CubeIcon } from '@heroicons/react/20/solid';
 
-export default function CharacterCreation({ onComplete }) {
-  const [errors, setErrors] = useState({});
+export default function CharacterCreation({
+  onComplete,
+}: {
+  onComplete: Function;
+}) {
+  const [errors, setErrors] = useState<{
+    name?: string;
+    class?: string;
+    race?: string;
+  }>({});
   const [step, setStep] = useState(1);
-  const [character, setCharacter] = useState({
+  const [character, setCharacter] = useState<Character>({
     name: '',
     race: '',
     class: '',
@@ -39,7 +48,11 @@ export default function CharacterCreation({ onComplete }) {
   const prevStep = () => setStep(step - 1);
 
   const validateStep1 = () => {
-    const newErrors = {};
+    const newErrors: {
+      name?: string;
+      race?: string;
+      class?: string;
+    } = {};
 
     if (!character.name) {
       newErrors.name = 'Character name is required';
@@ -55,13 +68,16 @@ export default function CharacterCreation({ onComplete }) {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange: ChangeEventHandler<
+    HTMLSelectElement | HTMLInputElement
+  > = (event) => {
     const { name, value } = event.target;
     // when a class is selected, add starting equipment and skills
     if (name === 'class') {
-      const startingEquipmentForClass = startingEquipment[value] || [];
-      const startingSkillsForClass = startingSkillsAndSpells[value] || [];
-      setCharacter((prev) => ({
+      let v = value as keyof typeof startingEquipment;
+      const startingEquipmentForClass = startingEquipment[v] || [];
+      const startingSkillsForClass = startingSkillsAndSpells[v] || [];
+      setCharacter((prev: Character) => ({
         ...prev,
         class: value,
         equipment: startingEquipmentForClass,
@@ -72,7 +88,7 @@ export default function CharacterCreation({ onComplete }) {
     }
   };
 
-  const handleStatChange = (stat, value) => {
+  const handleStatChange = (stat: string, value: number) => {
     // if constitution is changed, update health
     setCharacter((prev) => {
       let health = prev.health;
@@ -90,13 +106,13 @@ export default function CharacterCreation({ onComplete }) {
     });
   };
 
-  const handleStatRoll = (stat) => {
+  const handleStatRoll = (stat: string) => {
     const roll = rollDice(6, 4); // Roll a D6 four times and sum the results
     handleStatChange(stat, roll);
   };
 
   // Dice rolling function (D6 rolling 4 times, keep the top 3 rolls)
-  const rollDice = (sides, rolls) => {
+  const rollDice = (sides: number, rolls: number) => {
     let result = [];
     for (let i = 0; i < rolls; i++) {
       result.push(Math.floor(Math.random() * sides) + 1);
@@ -217,7 +233,7 @@ export default function CharacterCreation({ onComplete }) {
               </label>
               <input
                 type="number"
-                value={character.stats[stat]}
+                value={character.stats[stat as keyof typeof character.stats]}
                 name={stat}
                 className="p-2 border border-gray-300 rounded w-20 mr-4"
                 disabled

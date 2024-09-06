@@ -1,4 +1,4 @@
-const EquipmentList = ({ equipment }) => {
+const EquipmentList = ({ equipment }: { equipment: string[] }) => {
   return (
     <div className="bg-rsPanel border-rsGold border-4 p-4 shadow-md rounded-rs mb-4">
       <h2 className="text-lg font-medium text-rsGold mb-2 font-rsFont">

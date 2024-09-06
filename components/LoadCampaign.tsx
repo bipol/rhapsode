@@ -7,19 +7,26 @@ export default function LoadCampaign({
   loadCharacter,
   setPrompt,
   setImageUrl,
+}: {
+  loadCharacter: any;
+  setPrompt: any;
+  setImageUrl: any;
 }) {
-  const [file, setFile] = useState();
+  const [file, setFile] = useState<File | undefined>();
 
-  function handleChange(event) {
-    setFile(event.target.files[0]);
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setFile(event?.target?.files?.item(0) || undefined);
   }
 
-  function handleSubmit(event) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // read the file, base 64 decode, parse the json, and set the state
     const reader = new FileReader();
     reader.onload = (e) => {
-      const data = e.target.result;
+      const data = e?.target?.result as string;
+      if (!data) {
+        return;
+      }
       const json = decodeURIComponent(escape(atob(data)));
       const { transcript, character, prompt, imageUrl } = JSON.parse(json);
       loadCharacter(character);
@@ -33,7 +40,7 @@ export default function LoadCampaign({
     The character's equipment: ${character.equipment.join(', ')}.
 
     Here's the current transcript of the game:
-    ${transcript.map((entry) => `${entry.type}: ${entry.text}`).join('\n')}
+    ${transcript.map((entry: { type: string; text: string }) => `${entry.type}: ${entry.text}`).join('\n')}
 
     Here is the previous prompt:
     ${prompt}
@@ -43,6 +50,9 @@ export default function LoadCampaign({
       setPrompt(newPrompt);
       console.log('Loaded campaign');
     };
+    if (!file) {
+      return;
+    }
     reader.readAsText(file);
   }
 

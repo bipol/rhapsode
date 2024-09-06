@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI();
 
-export async function POST(req, res) {
+export async function POST(req: Request, res: Response) {
   let { prompt } = await req.json();
 
   if (!prompt) {
@@ -23,7 +23,7 @@ export async function POST(req, res) {
 
     const imageUrl = image.data[0].url;
     return Response.json({ imageUrl });
-  } catch (error) {
+  } catch (error: any) {
     return new Response(error.message, { status: 500 });
   }
 }

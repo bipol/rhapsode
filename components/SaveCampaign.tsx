@@ -5,6 +5,12 @@ export default function SaveCampaign({
   prompt,
   imageUrl,
   onComplete,
+}: {
+  character: any;
+  transcript: any;
+  prompt: any;
+  imageUrl: any;
+  onComplete: any;
 }) {
   function handleSave() {
     const data = JSON.stringify({ character, transcript, prompt, imageUrl });

@@ -11,6 +11,7 @@ import EquipmentList from './Equipment';
 import SaveCampaign from './SaveCampaign';
 import SpellList from './Spells';
 import DiceRoll from './DiceRoll';
+import { Character } from './context';
 
 const status_text = {
   idle: '',
@@ -27,8 +28,17 @@ export default function GameMode({
   diceRolls,
   setDiceRolls,
   imageUrl,
+}: {
+  character: Character;
+  loadCharacter: any;
+  prompt: string;
+  diceRolls: any;
+  setDiceRolls: any;
+  imageUrl: any;
 }) {
-  const [transcript, setTranscript] = useState([]);
+  const [transcript, setTranscript] = useState<
+    { type: string; text: string }[]
+  >([]);
   const [appState, setAppState] = useState('idle'); // ['idle', 'listening', 'processing'
   const transportState = useVoiceClientTransportState();
   const voiceClient = useVoiceClient();
@@ -42,7 +52,7 @@ export default function GameMode({
 
   useVoiceClientEvent(
     VoiceEvent.UserTranscript,
-    useCallback((data) => {
+    useCallback((data: { final: boolean; text: string }) => {
       if (data.final) {
         setTranscript((prev) => {
           // remove duplicates
@@ -88,7 +98,7 @@ export default function GameMode({
       <SaveCampaign
         character={character}
         transcript={transcript}
-        prompt=""
+        prompt={prompt}
         imageUrl={imageUrl}
         onComplete={() => {}}
       />
@@ -116,9 +126,11 @@ export default function GameMode({
           {transcript.length > 0 && <Transcript transcript={transcript} />}
         </div>
         {appState === 'idle' && (
-          <button onClick={handleStart} className={buttonStyles}>
-            Start Game
-          </button>
+          <div className="flex justify-center text-center">
+            <button onClick={handleStart} className={buttonStyles}>
+              Begin your journey
+            </button>
+          </div>
         )}
         {status_text[transportState as keyof typeof status_text]}
       </div>
