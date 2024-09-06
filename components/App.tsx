@@ -13,6 +13,7 @@ export default function App() {
   const [prompt, setPrompt] = useState('');
   const [diceRolls, setDiceRolls] = useState<Array<Array<string | number>>>([]); // State to store dice rolls
   const [imageUrl, setImageUrl] = useState({});
+  const [loadingImage, setLoadingImage] = useState(false);
 
   useEffect(() => {
     if (character && !voiceClient) {
@@ -369,6 +370,7 @@ Begin by describing the scene. After the image is generated, continue speaking. 
         }
         if (fn.functionName === 'generate_image' && args.image_prompt) {
           console.log('Generating image', args.image_prompt);
+          setLoadingImage(true);
           fetch('/api/generate', {
             method: 'POST',
             headers: {
@@ -379,6 +381,7 @@ Begin by describing the scene. After the image is generated, continue speaking. 
             const data = await response.json();
             if (response.ok) {
               const image = { imageUrl: data.imageUrl, title: args.title };
+              setLoadingImage(false);
               setImageUrl(image);
             }
           });
@@ -415,6 +418,7 @@ Begin by describing the scene. After the image is generated, continue speaking. 
               diceRolls={diceRolls}
               setDiceRolls={setDiceRolls}
               imageUrl={imageUrl}
+              loadingImage={loadingImage}
             />
             <VoiceClientAudio />
           </VoiceClientProvider>

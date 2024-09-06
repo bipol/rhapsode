@@ -28,6 +28,7 @@ export default function GameMode({
   diceRolls,
   setDiceRolls,
   imageUrl,
+  loadingImage,
 }: {
   character: Character;
   loadCharacter: any;
@@ -35,6 +36,7 @@ export default function GameMode({
   diceRolls: any;
   setDiceRolls: any;
   imageUrl: any;
+  loadingImage: boolean;
 }) {
   const [transcript, setTranscript] = useState<
     { type: string; text: string }[]
@@ -108,17 +110,34 @@ export default function GameMode({
             <EquipmentList equipment={character.equipment} />
             <SpellList spells={character.skills} />
             <DiceRoll diceRolls={diceRolls} setDiceRolls={setDiceRolls} />
-            {imageUrl.imageUrl && (
+            {(imageUrl.imageUrl || loadingImage) && (
               <div className="bg-rsPanel border-rsGold border-4 p-4 shadow-md rounded-rs">
                 <div className="flex-col justify-center">
                   <h1 className="text-2xl font-rsFont mb-6 text-center text-rsGold">
+                    {loadingImage && (
+                      <div className="flex justify-center text-center">
+                        <img
+                          src="/skull.gif"
+                          alt="Torch Animation"
+                          className="w-16 h-16"
+                        />
+                        'Thinking...'
+                        <img
+                          src="/skull.gif"
+                          alt="Torch Animation"
+                          className="w-16 h-16"
+                        />
+                      </div>
+                    )}
                     {imageUrl.title}
                   </h1>
-                  <img
-                    src={imageUrl.imageUrl}
-                    alt={imageUrl.title}
-                    className="mt-4 border-4 border-rsGold rounded-md w-full max-w-lg"
-                  />
+                  {imageUrl.imageUrl && (
+                    <img
+                      src={imageUrl.imageUrl}
+                      alt={imageUrl.title}
+                      className="mt-4 border-4 border-rsGold rounded-md w-full max-w-lg"
+                    />
+                  )}
                 </div>
               </div>
             )}
