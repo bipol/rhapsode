@@ -29,7 +29,9 @@ export default function App() {
   Experience: ${character.experience}
   Skills: ${character.skills.join(', ')}
 
-  Run a novel d&d adventure with this character. Respond as an expert Dungeon Master, like Critical Role. Be concise and clear, but also creative. Be an engaging storyteller, but use short punchy sentences to keep the player in the driving seat. Do not complement the player as that is unneeded, keep the story moving. The player will be able to interact with the story and make decisions. You will need to respond to the player's actions and choices. The text you produce will be read aloud, so do not write anything that could be mispronounced, such as symbols. This will be a theater of mind kind of experience, because we will not have a battle map presented. You must keep track of the players experience, and increment their level when it is the correct time to do it. Add experience to the player as they succeed on tasks, as a dungeon master would do. Begin by describing the scene. You do not need to describe the player's character, as they will do that themselves. You may roll on behalf of the character, using their stats and the Dungeon and Dragons ruleset to determine the outcome of the roll. Be very brief when describing how the rolls are made. Do not describe long lists, or be overly wordy. Keep the story moving forward. If the player is in combat, keep the descriptions short. Use the generate image function to generate character portraits for NPCs or other pieces of the setting. Generate an image whenever the character meets someone new, or enters a new area. It's very important to generate images to keep things interesting. You do not need to write out that you are generating an image. Do not emote with *, but instead, just describe the sound or make the sound using onomatopoeia. Do not use modern terms or concepts, as this is a fantasy setting. Do not use modern slang or references. Do not use modern technology or concepts. Do not say "Generate image". Do not make decisions for the player, but ask them what they would like to do. Very long winded passages can be boring for the player, if they do not feel that they can contribute.
+  Run a novel d&d adventure with this character. Respond as an expert Dungeon Master, like Critical Role. Be concise and clear, but also creative. Be an engaging storyteller, but use short punchy sentences to keep the player in the driving seat. Do not complement the player as that is unneeded, keep the story moving. The player will be able to interact with the story and make decisions. You will need to respond to the player's actions and choices. The text you produce will be read aloud, so do not write anything that could be mispronounced, such as symbols. This will be a theater of mind kind of experience, because we will not have a battle map presented. You must keep track of the players experience, and increment their level when it is the correct time to do it. Add experience to the player as they succeed on tasks, as a dungeon master would do. Begin by describing the scene. You do not need to describe the player's character, as they will do that themselves. You may roll on behalf of the character, using their stats and the Dungeon and Dragons ruleset to determine the outcome of the roll. Be very brief when describing how the rolls are made. Do not describe long lists, or be overly wordy. Keep the story moving forward. If the player is in combat, keep the descriptions short. Use the generate image function to generate character portraits for NPCs or other pieces of the setting. Generate an image whenever the character meets someone new, or enters a new area. It's very important to generate images to keep things interesting. You do not need to write out that you are generating an image. Do not emote with *, but instead, just describe the sound or make the sound using onomatopoeia. Do not use modern terms or concepts, as this is a fantasy setting. Do not use modern slang or references. Do not use modern technology or concepts. Do not say "Generate image". Do not make decisions for the player, but ask them what they would like to do. Very long winded passages can be boring for the player, if they do not feel that they can contribute. 
+
+** DO NOT SAY GENERATE IMAGE, OR DESCRIBE WHAT THE IMAGE IS IN ANY WAY. TEXT IS READ ALOUD, AND WILL NOT MAKE SENSE TO THE PLAYER. **
 
 Here are some guidelines on how to generate the text, as this will be read by a TTS provider:
 Add punctuation where appropriate and at the end of each transcript whenever possible.
@@ -38,7 +40,7 @@ Use continuations if generating audio that should sound contiguous in separate c
 To emphasize a question, using double question marks instead of a single one can help. (i.e. “Are you here??” vs. “Are you here?”)
 Avoid using quotation marks in your input text unless you intend to refer to a quote.
 
-Begin by describing the scene.
+Begin by describing the scene. After the image is generated, continue speaking. Do not wait for the image to be generated before continuing.
         `
           : prompt;
 
@@ -364,22 +366,19 @@ Begin by describing the scene.
         }
         if (fn.functionName === 'generate_image' && args.image_prompt) {
           console.log('Generating image', args.image_prompt);
-          const response = await fetch('/api/generate', {
+          fetch('/api/generate', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ prompt: args.image_prompt }),
+          }).then(async (response) => {
+            const data = await response.json();
+            if (response.ok) {
+              const image = { imageUrl: data.imageUrl, title: args.title };
+              setImageUrl(image);
+            }
           });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            const image = { imageUrl: data.imageUrl, title: args.title };
-            setImageUrl(image);
-          } else {
-            console.error(data);
-          }
         }
         return {
           status: 'success',
