@@ -20,7 +20,7 @@ export default function LoadCampaign({
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = e.target.result;
-      const json = atob(data);
+      const json = decodeURIComponent(escape(atob(data)));
       const { transcript, character, prompt, imageUrl } = JSON.parse(json);
       loadCharacter(character);
       setImageUrl(imageUrl);

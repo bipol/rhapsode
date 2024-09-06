@@ -8,7 +8,7 @@ export default function SaveCampaign({
 }) {
   function handleSave() {
     const data = JSON.stringify({ character, transcript, prompt, imageUrl });
-    const json = btoa(data);
+    const json = btoa(unescape(encodeURIComponent(data)));
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
