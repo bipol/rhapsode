@@ -42,6 +42,7 @@ export default function GameMode({
     { type: string; text: string }[]
   >([]);
   const [appState, setAppState] = useState('idle'); // ['idle', 'listening', 'processing'
+  const [muted, setMuted] = useState(false);
   const transportState = useVoiceClientTransportState();
   const voiceClient = useVoiceClient();
 
@@ -91,6 +92,11 @@ export default function GameMode({
   const buttonStyles =
     'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
 
+  function toggleMute() {
+    voiceClient?.enableMic(muted);
+    setMuted(!muted);
+  }
+
   async function handleStart() {
     await voiceClient?.start();
   }
@@ -109,7 +115,7 @@ export default function GameMode({
           <div className="flex flex-row space-x-4">
             <EquipmentList equipment={character.equipment} />
             <SpellList spells={character.skills} />
-            <DiceRoll diceRolls={diceRolls} setDiceRolls={setDiceRolls} />
+            <DiceRoll diceRolls={diceRolls} setDiceRolls={setDiceRolls} />{' '}
             {(imageUrl.imageUrl || loadingImage) && (
               <div className="bg-rsPanel border-rsGold border-4 p-4 shadow-md rounded-rs">
                 <div className="flex-col justify-center">
@@ -118,13 +124,13 @@ export default function GameMode({
                       <div className="flex justify-center text-center">
                         <img
                           src="/skull.gif"
-                          alt="Torch Animation"
+                          alt="spinning skull"
                           className="w-16 h-16"
                         />
                         'Thinking...'
                         <img
                           src="/skull.gif"
-                          alt="Torch Animation"
+                          alt="spinning skull"
                           className="w-16 h-16"
                         />
                       </div>
@@ -152,6 +158,23 @@ export default function GameMode({
           </div>
         )}
         {status_text[transportState as keyof typeof status_text]}
+        <div className="flex justify-center text-center">
+          <button
+            onClick={toggleMute}
+            className={`bg-rsGold text-rsText font-rsFont border-4 border-rsBorder rounded-rs px-4 py-2 mt-4 
+        hover:bg-rsPanel hover:text-rsGold hover:shadow-rsGlow transition-all duration-150 ease-in-out
+        ${muted ? 'bg-red-500' : 'bg-green-500'}`}
+          >
+            <div>
+              <img
+                src={muted ? '/spinning-skull.gif' : '/skull_chattering.gif'}
+                alt={muted ? 'Microphone is muted' : 'Microphone is unmuted'}
+                className="w-16 h-16"
+              />
+              <p>{muted ? 'Unmute' : 'Mute'}</p>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
