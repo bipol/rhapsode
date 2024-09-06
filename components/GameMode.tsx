@@ -90,7 +90,7 @@ export default function GameMode({
     'bg-rsGold text-rsText font-rsFont px-4 py-2 border-4 border-rsBorder rounded-rs shadow-rsGlow hover:shadow-lg active:shadow-sm';
 
   async function handleStart() {
-    await voiceClient.start();
+    await voiceClient?.start();
   }
   return (
     <div className="min-h-screen flex flex-col">
