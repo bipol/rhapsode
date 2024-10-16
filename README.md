@@ -1,6 +1,8 @@
 ## Rhapsode - a virtual dungeon master
 
-This is a virtual dungeon master I created hastily for a hackathon project at Daily. It's quite messy, but achieved my goal of creating an interactive dungeon master for solo questing. It handles character creation, portrait and setting generation, as well as inventory management. The UI was mostly an after thought to facilitate the gameplay - I wanted to test function calling, particularly in allowing the "dungeon master" craft items, rolls, spells, the setting.
+This is a virtual dungeon master I created hastily for a hackathon project at Daily. It's quite messy, but achieved my goal of creating an interactive dungeon master for solo questing. It handles character creation, portrait and setting generation, as well as inventory management. 
+
+The UI was mostly an after thought to facilitate the gameplay - I wanted to test function calling, particularly in allowing the "dungeon master" craft items, rolls, spells, the setting, etc.
 
 <img width="1141" alt="image" src="https://github.com/user-attachments/assets/6400b4ce-41fb-4b6d-b335-756347aefb79">
 
@@ -43,7 +45,7 @@ Daily Bots is built on two open-source technologies:
 
 Learn more about the RTVI web client libraries [on the docs](https://docs.rtvi.ai).
 
-The application itself guides a player through character creation, and loads that into a beefy prompt. This prompt has a set of functions that control the state of the game. All of this logic is located in [App.tsx](components/App.tsx). The game is "saved" by encoding a big json blob intoa base64 text file, which is really just a transcript of the entire play session last time. 
+The application itself guides a player through character creation, and loads that into a beefy prompt. This prompt has a set of functions that control the state of the game. All of this logic is located in [App.tsx](components/App.tsx). The game is "saved" by encoding a big json blob into a base64 text file, which is really just a transcript of the entire play session last time. 
 
 This works pretty well, but is very expensive in terms of tokens. We could port this to use Llama 8b from claude, but we'd have to change the function calling pieces.
 
@@ -53,7 +55,7 @@ The majority of the RTVI configuration can be found in [App.tsx](components/App.
 
 ### API routes
 
-This project exposes three server-side routes:
+This project exposes two server-side routes:
 
 - [api/route.ts](app/api/route.ts)
 - [api/generate/route.ts](app/api/generate/route.ts)
