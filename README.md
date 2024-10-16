@@ -1,6 +1,7 @@
 ## Rhapsode - a virtual dungeon master
 
 This is a virtual dungeon master I created hastily for a hackathon project at Daily. It's quite messy, but achieved my goal of creating an interactive dungeon master for solo questing. It handles character creation, portrait and setting generation, as well as inventory management. 
+<img width="1141" alt="image" src="https://github.com/user-attachments/assets/6400b4ce-41fb-4b6d-b335-756347aefb79">
 
 ## Run it locally
 
