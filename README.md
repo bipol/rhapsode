@@ -43,9 +43,7 @@ Learn more about the RTVI web client libraries [on the docs](https://docs.rtvi.a
 
 The application itself guides a player through character creation, and loads that into a beefy prompt. This prompt has a set of functions that control the state of the game. All of this logic is located in [App.tsx](components/App.tsx). The game is "saved" by encoding a big json blob intoa base64 text file, which is really just a transcript of the entire play session last time. 
 
-This works pretty well, but is very expensive in terms of tokens. 
-
-The LLM I used mostly was claude, but I opted for llama 3.1 8B for the demo, for cost reasons. Additionally, I have a timeout of 5 minutes to limit usage as well. 
+This works pretty well, but is very expensive in terms of tokens. We could port this to use Llama 8b from claude, but we'd have to change the function calling pieces.
 
 ### Configuration
 
